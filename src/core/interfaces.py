@@ -4,8 +4,11 @@
 """
 
 from abc import ABC, abstractmethod
-from typing import List, Protocol, Iterator
-from .problem import Problem
+from typing import List, Protocol, Iterator, TYPE_CHECKING
+
+# 使用TYPE_CHECKING避免循环导入
+if TYPE_CHECKING:
+    from .problem import Problem
 
 
 # ========================================
@@ -50,12 +53,12 @@ class IFormatter(Protocol):
     """格式化器接口"""
 
     @abstractmethod
-    def format_problems(self, problems: List[Problem], per_line: int) -> str:
+    def format_problems(self, problems: List["Problem"], per_line: int) -> str:
         """格式化题目"""
         pass
 
     @abstractmethod
-    def format_answers(self, problems: List[Problem], per_line: int) -> str:
+    def format_answers(self, problems: List["Problem"], per_line: int) -> str:
         """格式化答案"""
         pass
 
@@ -84,7 +87,7 @@ class IIterator(Protocol):
         pass
 
     @abstractmethod
-    def next(self) -> Problem:
+    def next(self) -> "Problem":
         """获取下一个元素"""
         pass
 

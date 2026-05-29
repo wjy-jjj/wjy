@@ -3,7 +3,7 @@
 负责管理运算策略（策略模式）
 """
 
-from typing import List, type
+from typing import List, Type
 from .interfaces import IOperation
 from .types import OperationType
 from .operations import Addition, Subtraction, Multiplication

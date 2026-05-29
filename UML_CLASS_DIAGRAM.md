@@ -217,6 +217,49 @@ classDiagram
     Addition *-- OperationConfig : 依赖
     Subtraction *-- OperationConfig : 依赖
     Multiplication *-- OperationConfig : 依赖
+
+    %% 主程序模块 - 菜单系统
+    class MenuSystem {
+        -_current_problem_set: ProblemSet
+        -_formatter: TextFormatter
+        -_outputter: ConsoleOutputter
+        -_print_service: ProblemPrintService
+        +run() None
+        +_show_welcome() None
+        +_show_main_menu() None
+        +_get_menu_choice(min: int, max: int) int
+        +_get_problem_count() int
+        +_generate_standard_set() None
+        +_generate_addition_set() None
+        +_generate_subtraction_set() None
+        +_generate_multiplication_set() None
+        +_generate_mixed_set() None
+        +_display_problems() None
+        +_start_interactive_practice() None
+        +_exit_system() None
+    }
+
+    %% 交互练习模块
+    class InteractivePractice {
+        -_problem_set: ProblemSet
+        -_correct_count: int
+        -_wrong_count: int
+        -_wrong_problems: List~Problem~
+        +InteractivePractice(problem_set: ProblemSet)
+        +start() None
+        +_get_user_input(problem: Problem, index: int) Optional~int~
+        +_check_answer(problem: Problem, user_answer: int) None
+        +_show_summary() None
+    }
+
+    %% 新类的关系
+    MenuSystem *-- ProblemSet : 使用
+    MenuSystem *-- TextFormatter : 依赖
+    MenuSystem *-- ConsoleOutputter : 依赖
+    MenuSystem *-- ProblemPrintService : 依赖
+    MenuSystem --> InteractivePractice : 创建
+    InteractivePractice *-- ProblemSet : 使用
+    InteractivePractice *-- TextFormatter : 依赖
 ```
 
 ## 类关系说明

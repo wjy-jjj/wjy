@@ -756,5 +756,100 @@ class TestEdgeCases:
         assert len(problems) > 0
 
 
+# ========================================
+# 主程序模块测试
+# ========================================
+class TestInteractivePractice:
+    """交互练习模块单元测试"""
+
+    @pytest.fixture
+    def sample_problem_set(self):
+        """创建示例题目集"""
+        operations = [Addition()]
+        generator = ProblemGenerator(operations)
+        problems = generator.generate(5)
+        return ProblemSet(problems)
+
+    def test_creation(self, sample_problem_set):
+        """测试创建交互练习实例"""
+        practice = InteractivePractice(sample_problem_set)
+        assert practice._correct_count == 0
+        assert practice._wrong_count == 0
+        assert len(practice._wrong_problems) == 0
+
+    def test_check_answer_correct(self, sample_problem_set):
+        """测试检查正确答案"""
+        practice = InteractivePractice(sample_problem_set)
+        problem = sample_problem_set[0]
+        practice._check_answer(problem, problem.answer)
+        assert practice._correct_count == 1
+        assert practice._wrong_count == 0
+
+    def test_check_answer_wrong(self, sample_problem_set):
+        """测试检查错误答案"""
+        practice = InteractivePractice(sample_problem_set)
+        problem = sample_problem_set[0]
+        practice._check_answer(problem, problem.answer + 1)
+        assert practice._correct_count == 0
+        assert practice._wrong_count == 1
+        assert len(practice._wrong_problems) == 1
+
+    def test_show_summary_no_problems(self, capsys):
+        """测试显示无题目完成的总结"""
+        practice = InteractivePractice(ProblemSet([]))
+        practice._show_summary()
+        captured = capsys.readouterr()
+        assert "完成题数: 0 道" in captured.out
+
+
+class TestMenuSystem:
+    """菜单系统单元测试"""
+
+    def test_initialization(self):
+        """测试菜单系统初始化"""
+        menu = MenuSystem()
+        assert menu._current_problem_set is None
+        assert isinstance(menu._formatter, TextFormatter)
+        assert isinstance(menu._outputter, ConsoleOutputter)
+        assert isinstance(menu._print_service, ProblemPrintService)
+
+    def test_generate_standard_set(self):
+        """测试生成标准题目集"""
+        menu = MenuSystem()
+        menu._current_problem_set = ProblemSetFactory.create_standard_set(10)
+        assert menu._current_problem_set.count() == 10
+
+    def test_generate_addition_set(self):
+        """测试生成加法题目集"""
+        menu = MenuSystem()
+        menu._current_problem_set = ProblemSetFactory.create_addition_only(10)
+        assert menu._current_problem_set.count() == 10
+
+    def test_generate_subtraction_set(self):
+        """测试生成减法题目集"""
+        menu = MenuSystem()
+        menu._current_problem_set = ProblemSetFactory.create_subtraction_only(10)
+        assert menu._current_problem_set.count() == 10
+
+    def test_generate_multiplication_set(self):
+        """测试生成乘法题目集"""
+        menu = MenuSystem()
+        menu._current_problem_set = ProblemSetFactory.create_multiplication_set(10)
+        assert menu._current_problem_set.count() == 10
+
+    def test_generate_mixed_set(self):
+        """测试生成混合题目集"""
+        menu = MenuSystem()
+        menu._current_problem_set = ProblemSetFactory.create_mixed_set(10, include_multiplication=True)
+        assert menu._current_problem_set.count() == 10
+
+    def test_exit_message(self, capsys):
+        """测试退出消息"""
+        menu = MenuSystem()
+        menu._exit_system()
+        captured = capsys.readouterr()
+        assert "谢谢使用" in captured.out
+
+
 if __name__ == "__main__":
     pytest.main([__file__, "-v", "--tb=short"])
